@@ -15,8 +15,9 @@ MIN_START_STAT = 2
 
 def main():
     ### TODO 
-    # Implement classes for user -> enemy:user
-    # 
+    # Implement classes for user -> fighter, rouge, mage?
+    # Combat fixes, enemy turn
+    # Perhaps add art?
     ###
     user_stats = {'attack_stat': 0, 'defence_stat': 0, 'health_stat': 20}
     inventory = []
@@ -126,7 +127,7 @@ def enemy_encounter(user_stats, enemy_stats, enemy_encounter_chance, inventory, 
 # This function determines if the user encounters an item. If yes, it is added to the user's inventory.
 def find_item(item_chance, inventory, items):
     item_found = random.choice(items)
-    if item_chance >= 0.4:
+    if item_chance >= 0.6:
         print(f"You found a {item_found}!")
         inventory.append(item_found)
     else:
@@ -252,7 +253,7 @@ def use_item(inventory, user_stats, enemy_stats, items, in_combat, user_win_coun
         return
     else: 
         print("I don't think I can do that...")
-        user_choice = str(input("Which item will you use? "))
+        user_choice = str(input("Which item will you use? ")) # need to either fix so user can now input a correct option, or return
 
 """
 This function allows the user to fight enemies.
