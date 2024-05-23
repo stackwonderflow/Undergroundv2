@@ -148,7 +148,7 @@ def find_item(item_chance, inventory, items):
 This function determines whether the user is able to flee from combat.
 If yes, the user is directed back to the menu. If no, the user remains in combat.
 """
-def flee(flee_chance, user_stats, inventory, enemy_stats, items, in_combat):
+def flee(flee_chance, user_stats, inventory, enemy_stats, items, in_combat, user_win_count):
     if flee_chance >= 0.6:
         print("You were able to flee combat...")
         in_combat = False
@@ -165,7 +165,7 @@ def flee(flee_chance, user_stats, inventory, enemy_stats, items, in_combat):
 This function determines whether the user is able to attack the enemy and how much damage is dealt.
 Damage dealt is based off of the user's attack_stat and the enemy's defence_stat.
 """
-def attack(attack_chance, user_stats, enemy_stats, check_enemy_stats):
+def attack(attack_chance, user_stats, enemy_stats):
     if attack_chance >= 0.4:
         print("You strike the enemy...")
         if user_stats['attack_stat'] > enemy_stats['defence_stat']:
@@ -183,7 +183,7 @@ def attack(attack_chance, user_stats, enemy_stats, check_enemy_stats):
 This function determines whether the user is able to defend against the enemy and how much damage is dealt.
 Damage dealt is based off of the user's defence_stat and the enemy's attack_stat.
 """
-def defend(defend_chance, user_stats, enemy_stats, check_enemy_stats):
+def defend(defend_chance, user_stats, enemy_stats):
     if defend_chance >= 0.4:
         print("You block the enemy's blow...")
         if user_stats['defence_stat'] > enemy_stats['attack_stat']:
@@ -284,7 +284,7 @@ def combat(user_stats, enemy_stats, inventory, items, user_win_count):
         if user_action == '1':
             print("You attack the enemy...")
             attack_chance = random.random()
-            attack(attack_chance, user_stats, enemy_stats, check_enemy_stats)
+            attack(attack_chance, user_stats, enemy_stats)
             if enemy_stats['health_stat'] <= 0:
                 defeat_enemy(enemy_stats, user_stats)
                 user_win_count += 1
@@ -312,7 +312,7 @@ def combat(user_stats, enemy_stats, inventory, items, user_win_count):
         elif user_action == '2':
             print("You defend yourself...")
             defend_chance = random.random()
-            defend(defend_chance, user_stats, enemy_stats, check_enemy_stats)
+            defend(defend_chance, user_stats, enemy_stats)
             if enemy_stats['health_stat'] <= 0:
                 defeat_enemy(enemy_stats, user_stats)
                 user_win_count += 1
