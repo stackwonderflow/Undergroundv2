@@ -1,26 +1,34 @@
 """
-This is a simple console game called 'Underground.' 
-In it, players can battle enemies that become progressively stronger.
-Players can also collect items and use them. The random library is used to determine whether a player encounters enemies and items. 
-It is also used to determine whether a player is able to strike enemies, block enemy attacks, or flee from combat.
-The game ends when a player's health_stat reaches zero.
+This project was initially made for Code In Place 2022. 
+Any new changes to the game will be marked as such by comments and 
+new functionality will be summarized either here or in README.
 """
 
 import random
 import os
 
-# These constants are used to determine the players starting attack_stat and defence_stat
+# These constants are used to determine the starting attack_stat and defence_stat for the user
 MAX_START_STAT = 10
 MIN_START_STAT = 2
 
 def main():
     ### TODO 
-    # Implement classes for user -> fighter, rouge, mage?
-    # Combat fixes, enemy turn 
-    #   -- enemy health fixed, need to make combat a bit more challenging
-    # Perhaps add art?
+    # Implement classes for user -> brawler, rouge, mage?
+    #   brawler - should be done
+    #   rouge - add item 'Arrow' only allow rouges to find, write something in flee() for rouges to allow them to flee more easily
+    #   mage - add item 'Raw Magick' only allow mages to find, give mage a staff -- need to do outside of get_class()
+    # Implement different enemy types
+    #   Golem - beefy monster with high starting health
+    #   Imp - agile monster with lower health
+    #   Slime - basic monster
+    # Combat fixes 
+    #   -- currently, player takes damage as a result of their stats vs enemy stats or if they fail to attack/defend/flee
+    #   Add combat implementations for new classes
+    # Perhaps add art? 
+    #   -- ascii art for combat? -- chat can help
+    #   -- ascii dark tunnel for outside of combat? -- chat can help
     ###
-    user_stats = {'attack_stat': 0, 'defence_stat': 0, 'health_stat': 20}
+    user_stats = {'attack_stat': 0, 'defence_stat': 0, 'health_stat': 20, 'class': 'none'}
     inventory = []
     items = ['rock', 'first aid kit']
     enemy_stats = {'attack_stat': 1, 'defence_stat': 1, 'health_stat': 5}
@@ -35,7 +43,7 @@ def main():
 def clear_console():
     os.system('clear')
 
-# This function contains the Intro text and takes input from the user
+# This function contains the intro text and takes input from the user
 def intro(inventory):
     print('\033[31m' + "This is a simple console game called 'Underground.'\nIn it, players can battle enemies that become progressively stronger after each encounter.\nPlayers can also collect items and use them. The random library is used to determine whether a player encounters enemies and items.\nIt is also used to determine whether a player is able to strike enemies, block enemy attacks, or flee from combat.\nThe game ends when a player's health_stat reaches zero." + '\033[0m')
     user_input = str(input("Press enter to continue. "))
@@ -58,6 +66,78 @@ def get_stats(user_stats):
     user_stats['attack_stat'] = random.randint(MIN_START_STAT, MAX_START_STAT)
     user_stats['defence_stat'] = random.randint(MIN_START_STAT, MAX_START_STAT)
 
+# New function for class selection -- need to finish implementation / test
+def get_class(user_stats, inventory):
+    print("Choose Your Class: Mage, Rouge, Brawler")
+    user_input = str(input("Enter your selection to learn more. "))
+    if user_input == 'Mage':
+        print("Mages can inflict damage from a distance using a substance called 'Raw Magick.' Their natural affinity for magick allows them to draw on the enegry of their surroundings. Mages tend to have lower health and higher defence.")
+        user_input = str(input("Would you like to be a Mage? (Y/N) "))
+        if user_input == 'Y':
+            user_stats['health_stat'] -= 10
+            user_stats['defence_stat'] += 5
+            user_stats['class'] = 'Mage'
+        if user_input == 'N':
+            user_input = str(input("Press enter to continue. "))
+            while user_input == '':
+                break
+            clear_console()
+            get_class(user_stats)
+        else:
+            print("Please choose a valid selection.")
+            user_input = str(input("Press enter to continue. "))
+            while user_input == '':
+                break
+            clear_console()
+            get_class(user_stats)
+    if user_input == 'Rouge':
+        print("Rouges prefer to avoid direct combat and weild bows. They can more easily flee from combat due to their preference for stealth.")
+        user_input = str(input("Would you like to be a Rouge? (Y/N) "))
+        if user_input == 'Y':
+            user_stats['class'] = 'Rouge'
+        if user_input == 'N':
+            user_input = str(input("Press enter to continue. "))
+            while user_input == '':
+                break
+            clear_console()
+            get_class(user_stats)
+        else:
+            print("Please choose a valid selection.")
+            user_input = str(input("Press enter to continue. "))
+            while user_input == '':
+                break
+            clear_console()
+            get_class(user_stats)   
+    if user_input == 'Brawler':
+        print("Brawlers enjoy close quarters combat and fight with their bare hands. They tend to have higher health and attack.")
+        user_input = str(input("Would you like to be a Brawler? (Y/N) "))
+        if user_input == 'Y':
+            user_stats['health'] += 10
+            user_stats['attack'] += 5
+            user_stats['class'] = 'Brawler'
+        if user_input == 'N':
+            user_input = str(input("Press enter to continue. "))
+            while user_input == '':
+                break
+            clear_console()
+            get_class(user_stats)
+        else:
+            print("Please choose a valid selection.")
+            user_input = str(input("Press enter to continue. "))
+            while user_input == '':
+                break
+            clear_console()
+            get_class(user_stats)   
+    else:
+        print("Please choose a valid class.")
+        user_input = str(input("Press enter to continue. "))
+        while user_input == '':
+            break
+        clear_console()
+        get_class(user_stats)
+
+
+# New function to reduce redundancies in code
 def defeat_enemy(enemy_stats, user_stats):
     print('\033[31m' + "You beat the enemy!" + '\033[0m')
     enemy_stats['health_stat'] = 0
@@ -159,7 +239,9 @@ def flee(flee_chance, user_stats, inventory, enemy_stats, items, in_combat, user
         menu(user_stats, inventory, enemy_stats, items, in_combat, user_win_count)
     else:
         print("You were not able to flee combat.")
-        user_stats['health_stat'] -= 1
+        if flee_chance <= 0.2:
+            print("You trip while trying to flee, minorly injuring yourself.")
+            user_stats['health_stat'] -= 1
 
 """
 This function determines whether the user is able to attack the enemy and how much damage is dealt.
@@ -169,14 +251,18 @@ def attack(attack_chance, user_stats, enemy_stats):
     if attack_chance >= 0.4:
         print("You strike the enemy...")
         if user_stats['attack_stat'] > enemy_stats['defence_stat']:
+            print("You overcome the enemy's defence, inflicting damage.") # New description
             enemy_stats['health_stat'] -= (user_stats['attack_stat'] - enemy_stats['defence_stat'])
         elif user_stats['attack_stat'] < enemy_stats['defence_stat']:
+            print("The enemy has the upper hand, you take damage.") # New description
             user_stats['health_stat'] -= (enemy_stats['defence_stat'] - user_stats['attack_stat'])
         else:
+            print("You clash with the enemy and both take damage.") # New description
             enemy_stats['health_stat'] -= 1
             user_stats['health_stat'] -= 1
     else:
         print("You missed...")
+        print("The enemy stikes you, inflicting damage.") # New description
         user_stats['health_stat'] -= enemy_stats['defence_stat']
 
 """
@@ -187,14 +273,18 @@ def defend(defend_chance, user_stats, enemy_stats):
     if defend_chance >= 0.4:
         print("You block the enemy's blow...")
         if user_stats['defence_stat'] > enemy_stats['attack_stat']:
+            print("You succesfully block and inflict damage on the enemy.") # New description
             enemy_stats['health_stat'] -= (user_stats['defence_stat'] - enemy_stats['attack_stat'])
         elif user_stats['defence_stat'] < enemy_stats['attack_stat']:
+            print("The enemy has the upper hand, you take damage.") # New description
             user_stats['health_stat'] -= (enemy_stats['attack_stat'] - user_stats['defence_stat'])
         else:
+            print("You clash with the enemy and both take damage.") # New description
             enemy_stats['health_stat'] -= 1
             user_stats['health_stat'] -= 1
     else:
         print("You failed to block the enemy's blow...")
+        print("You take damage.")
         user_stats['health_stat'] -= enemy_stats['attack_stat']
 
 # This function allow the user to use their collected items and removes them from the inventory if used.
