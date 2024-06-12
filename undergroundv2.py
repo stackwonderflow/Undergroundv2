@@ -13,17 +13,14 @@ MIN_START_STAT = 2
 
 def main():
     ### TODO 
-    # Implement classes for user -> brawler, rouge, mage?
+    # Implement classes for user -> brawler, rouge, mage
     #   brawler - should be done
-    #   rouge - add item 'Arrow' only allow rouges to find, write something in flee() for rouges to allow them to flee more easily
-    #   mage - add item 'Raw Magick' only allow mages to find, give mage a staff -- need to do outside of get_class()
+    #   rouge - implement combat -- arrows
+    #   mage - implement combat -- raw magick
     # Implement different enemy types
     #   Golem - beefy monster with high starting health
     #   Imp - agile monster with lower health
     #   Slime - basic monster
-    # Combat fixes 
-    #   -- currently, player takes damage as a result of their stats vs enemy stats or if they fail to attack/defend/flee
-    #   Add combat implementations for new classes
     # Perhaps add art? 
     #   -- ascii art for combat? -- chat can help
     #   -- ascii dark tunnel for outside of combat? -- chat can help
@@ -35,8 +32,8 @@ def main():
     user_win_count = 0
     in_combat = False
     intro(inventory) # Sends you into the game + gives you inventory
-    # Gamelogic: Begin game # Game gives you an inventory
-    get_stats(user_stats)
+    get_stats(user_stats) # Sends player to class selection
+    # Gamelogic: Begin game
     menu(user_stats, inventory, enemy_stats, items, in_combat, user_win_count)
 
 # This function clears the console when called
@@ -77,6 +74,8 @@ def get_class(user_stats, inventory):
             user_stats['health_stat'] -= 10
             user_stats['defence_stat'] += 5
             user_stats['class'] = 'Mage'
+            inventory.append('raw magick')
+            inventory.append('raw magick')
         if user_input == 'N':
             user_input = str(input("Press enter to continue. "))
             while user_input == '':
@@ -95,6 +94,8 @@ def get_class(user_stats, inventory):
         user_input = str(input("Would you like to be a Rouge? (Y/N) "))
         if user_input == 'Y':
             user_stats['class'] = 'Rouge'
+            inventory.append('arrow')
+            inventory.append('arrow')
         if user_input == 'N':
             user_input = str(input("Press enter to continue. "))
             while user_input == '':
@@ -158,7 +159,7 @@ def menu(user_stats, inventory, enemy_stats, items, in_combat, user_win_count):
             enemy_encounter_chance = random.random()
             item_chance = random.random()
             enemy_encounter(user_stats, enemy_stats, enemy_encounter_chance, inventory, items, user_win_count)
-            find_item(item_chance, inventory, items)
+            find_item(item_chance, inventory, items, user_stats)
             user_input = str(input("Press enter to continue. "))
             while user_input == '':
                 break
@@ -216,11 +217,17 @@ def enemy_encounter(user_stats, enemy_stats, enemy_encounter_chance, inventory, 
         print("...")
 
 # This function determines if the user encounters an item. If yes, it is added to the user's inventory.
-def find_item(item_chance, inventory, items):
+def find_item(item_chance, inventory, items, user_stats):
     item_found = random.choice(items)
     if item_chance >= 0.6:
         print(f"You found a {item_found}!")
         inventory.append(item_found)
+    elif item_chance >= 0.5 and user_stats['class'] == 'Rouge':
+        print("You found an arrow!")
+        inventory.append('arrow')
+    elif item_chance >= 0.5 and user_stats['class'] == 'Mage':
+        print("You found some raw magick")
+        inventory.append('raw magick')
     else:
         return
 
@@ -230,6 +237,14 @@ If yes, the user is directed back to the menu. If no, the user remains in combat
 """
 def flee(flee_chance, user_stats, inventory, enemy_stats, items, in_combat, user_win_count):
     if flee_chance >= 0.6:
+        print("You were able to flee combat...")
+        in_combat = False
+        user_input = str(input("Press enter to continue. "))
+        while user_input == '':
+            break
+        clear_console()
+        menu(user_stats, inventory, enemy_stats, items, in_combat, user_win_count)
+    elif flee_chance >= 0.3 and user_stats['class'] == 'Rouge':
         print("You were able to flee combat...")
         in_combat = False
         user_input = str(input("Press enter to continue. "))
@@ -353,7 +368,11 @@ def use_item(inventory, user_stats, enemy_stats, items, in_combat, user_win_coun
         return
     else: 
         print("I don't think I can do that...")
-        user_choice = str(input("Which item will you use? ")) # need to either fix so user can now input a correct option, or return
+        user_input = str(input("Press enter to continue. "))
+        while user_input == '':
+            break
+        clear_console()
+        use_item(inventory, user_stats, enemy_stats, items, in_combat, user_win_count)
 
 """
 This function allows the user to fight enemies.
@@ -399,6 +418,10 @@ def combat(user_stats, enemy_stats, inventory, items, user_win_count):
             print(f"Your Health: {user_stats['health_stat']} | Enemy Health: {enemy_stats['health_stat']}")
             print('\033[31m' + "1. Attack\n2. Defend\n3. Use Item\n4. Check Stats\n5. Flee\n0. Quit" + '\033[0m')
             user_action = str(input("Choose an action: "))
+        elif user_action == '1' and user_stats['class'] == 'Rouge': # Needs to be finished
+            break
+        elif user_action == '1' and user_stats['class'] == 'Mage': # Needs to be finished
+            break
         elif user_action == '2':
             print("You defend yourself...")
             defend_chance = random.random()
