@@ -1,9 +1,3 @@
-"""
-This project was initially made for Code In Place 2022. 
-Any new changes to the game will be marked as such by comments and 
-new functionality will be summarized either here or in README.
-"""
-
 import random
 import os
 
@@ -11,28 +5,73 @@ import os
 MAX_START_STAT = 10
 MIN_START_STAT = 2
 
+# ASCII art for the game - incomplete
+DARK_TUNNEL = """
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+"""
+
+COMBAT_ART = {
+    'Slime': """
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    """,
+    'Imp': """
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    """,
+    'Golem': """
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+       ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    """
+}
+
 def main():
     ### TODO 
-    # Implement classes for user -> brawler, rouge, mage
-    #   brawler - should be done
-    #   rouge - implement combat -- arrows
-    #   mage - implement combat -- raw magick
-    # Implement different enemy types
-    #   Golem - beefy monster with high starting health
-    #   Imp - agile monster with lower health
-    #   Slime - basic monster
-    # Perhaps add art? 
-    #   -- ascii art for combat? -- chat can help
-    #   -- ascii dark tunnel for outside of combat? -- chat can help
+    #   -- ascii art for combat?
+    #   -- ascii dark tunnel for outside of combat?
     ###
     user_stats = {'attack_stat': 0, 'defence_stat': 0, 'health_stat': 20, 'class': 'none'}
     inventory = []
     items = ['rock', 'first aid kit']
-    enemy_stats = {'attack_stat': 1, 'defence_stat': 1, 'health_stat': 5}
+    enemy_stats = {'attack_stat': 1, 'defence_stat': 1, 'health_stat': 5, 'type': 'Slime'}
     user_win_count = 0
     in_combat = False
     intro(inventory) # Sends you into the game + gives you inventory
     get_stats(user_stats) # Sends player to class selection
+    get_class(user_stats, inventory) # Added this line to call get_class
     # Gamelogic: Begin game
     menu(user_stats, inventory, enemy_stats, items, in_combat, user_win_count)
 
@@ -81,14 +120,14 @@ def get_class(user_stats, inventory):
             while user_input == '':
                 break
             clear_console()
-            get_class(user_stats)
+            get_class(user_stats, inventory)
         else:
             print("Please choose a valid selection.")
             user_input = str(input("Press enter to continue. "))
             while user_input == '':
                 break
             clear_console()
-            get_class(user_stats)
+            get_class(user_stats, inventory)
     if user_input == 'Rouge':
         print("Rouges prefer to avoid direct combat and weild bows. They can more easily flee from combat due to their preference for stealth.")
         user_input = str(input("Would you like to be a Rouge? (Y/N) "))
@@ -101,41 +140,41 @@ def get_class(user_stats, inventory):
             while user_input == '':
                 break
             clear_console()
-            get_class(user_stats)
+            get_class(user_stats, inventory)
         else:
             print("Please choose a valid selection.")
             user_input = str(input("Press enter to continue. "))
             while user_input == '':
                 break
             clear_console()
-            get_class(user_stats)   
+            get_class(user_stats, inventory)   
     if user_input == 'Brawler':
         print("Brawlers enjoy close quarters combat and fight with their bare hands. They tend to have higher health and attack.")
         user_input = str(input("Would you like to be a Brawler? (Y/N) "))
         if user_input == 'Y':
-            user_stats['health'] += 10
-            user_stats['attack'] += 5
+            user_stats['health_stat'] += 10
+            user_stats['attack_stat'] += 5
             user_stats['class'] = 'Brawler'
         if user_input == 'N':
             user_input = str(input("Press enter to continue. "))
             while user_input == '':
                 break
             clear_console()
-            get_class(user_stats)
+            get_class(user_stats, inventory)
         else:
             print("Please choose a valid selection.")
             user_input = str(input("Press enter to continue. "))
             while user_input == '':
                 break
             clear_console()
-            get_class(user_stats)   
+            get_class(user_stats, inventory)   
     else:
         print("Please choose a valid class.")
         user_input = str(input("Press enter to continue. "))
         while user_input == '':
             break
         clear_console()
-        get_class(user_stats)
+        get_class(user_stats, inventory)
 
 
 # New function to reduce redundancies in code
@@ -156,6 +195,7 @@ def menu(user_stats, inventory, enemy_stats, items, in_combat, user_win_count):
     while user_action != '':
         if user_action == '1':
             print("You move forward in the darkness...")
+            print(DARK_TUNNEL)
             enemy_encounter_chance = random.random()
             item_chance = random.random()
             enemy_encounter(user_stats, enemy_stats, enemy_encounter_chance, inventory, items, user_win_count)
@@ -211,8 +251,10 @@ def check_enemy_stats(enemy_stats):
 # This function determines if the user encounters an enemy. If yes, the user enters combat.
 def enemy_encounter(user_stats, enemy_stats, enemy_encounter_chance, inventory, items, user_win_count):
     if enemy_encounter_chance >= 0.5:
+        # Generate a new enemy type
+        generate_enemy(enemy_stats, user_win_count)
+        print(f"A {enemy_stats['type']} approaches you.")
         combat(user_stats, enemy_stats, inventory, items, user_win_count)
-        print("An enemy approaches you.")
     else:
         print("...")
 
@@ -361,9 +403,63 @@ def use_item(inventory, user_stats, enemy_stats, items, in_combat, user_win_coun
         while user_input == '':
             break
         clear_console()
-    elif user_choice == 'lantern':
+    elif user_choice == 'lantern' and ('lantern' in inventory):
         print("You hold up the lantern and examine your surroundings...")
         print("What is this place?")
+    elif user_choice == 'arrow' and ('arrow' in inventory) and in_combat == True:
+        print("You nock an arrow and fire at the enemy...")
+        arrow_hit_chance = random.random()
+        if arrow_hit_chance >= 0.5:
+            print("Your arrow strikes true!")
+            enemy_stats['health_stat'] -= (user_stats['attack_stat'] + 3)
+            inventory.remove('arrow')
+            user_input = str(input("Press enter to continue. "))
+            while user_input == '':
+                break
+            clear_console()
+            if enemy_stats['health_stat'] <= 0:
+                defeat_enemy(enemy_stats, user_stats)
+                user_win_count += 1
+                user_input = str(input("Press enter to continue. "))
+                while user_input == '':
+                    break
+                clear_console()
+                in_combat = False
+                menu(user_stats, inventory, enemy_stats, items, in_combat, user_win_count)
+        else:
+            print("Your arrow misses the mark...")
+            inventory.remove('arrow')
+            user_input = str(input("Press enter to continue. "))
+            while user_input == '':
+                break
+            clear_console()
+    elif user_choice == 'raw magick' and ('raw magick' in inventory) and in_combat == True:
+        print("You channel your raw magick...")
+        magick_hit_chance = random.random()
+        if magick_hit_chance >= 0.4:
+            print("Your magick strikes with devastating force!")
+            enemy_stats['health_stat'] -= (user_stats['attack_stat'] + 5)
+            inventory.remove('raw magick')
+            user_input = str(input("Press enter to continue. "))
+            while user_input == '':
+                break
+            clear_console()
+            if enemy_stats['health_stat'] <= 0:
+                defeat_enemy(enemy_stats, user_stats)
+                user_win_count += 1
+                user_input = str(input("Press enter to continue. "))
+                while user_input == '':
+                    break
+                clear_console()
+                in_combat = False
+                menu(user_stats, inventory, enemy_stats, items, in_combat, user_win_count)
+        else:
+            print("Your magick fizzles and dissipates...")
+            inventory.remove('raw magick')
+            user_input = str(input("Press enter to continue. "))
+            while user_input == '':
+                break
+            clear_console()
     elif user_choice == '':
         return
     else: 
@@ -385,15 +481,52 @@ def combat(user_stats, enemy_stats, inventory, items, user_win_count):
         break
     clear_console()
     in_combat = True
-    print("An enemy approaches you.")
+    print(f"A {enemy_stats['type']} approaches you.")
+    print(COMBAT_ART[enemy_stats['type']])
     print(f"Your Health: {user_stats['health_stat']} | Enemy Health: {enemy_stats['health_stat']}")
     print('\033[31m' + "1. Attack\n2. Defend\n3. Use Item\n4. Check Stats\n5. Flee\n0. Quit" + '\033[0m')
     user_action = str(input("Choose an action: "))
     while user_action != '':
         if user_action == '1':
-            print("You attack the enemy...")
-            attack_chance = random.random()
-            attack(attack_chance, user_stats, enemy_stats)
+            if user_stats['class'] == 'Rouge':
+                print("You draw your bow and nock an arrow...")
+                if 'arrow' in inventory:
+                    print("You fire an arrow at the enemy...")
+                    arrow_hit_chance = random.random()
+                    if arrow_hit_chance >= 0.5:
+                        print("Your arrow strikes true!")
+                        enemy_stats['health_stat'] -= (user_stats['attack_stat'] + 3)
+                        inventory.remove('arrow')
+                    else:
+                        print("Your arrow misses the mark...")
+                        inventory.remove('arrow')
+                else:
+                    print("You don't have any arrows left!")
+                    print("You attempt a melee attack instead...")
+                    attack_chance = random.random()
+                    attack(attack_chance, user_stats, enemy_stats)
+            elif user_stats['class'] == 'Mage':
+                print("You channel your raw magick...")
+                if 'raw magick' in inventory:
+                    print("You unleash a blast of raw magick at the enemy...")
+                    magick_hit_chance = random.random()
+                    if magick_hit_chance >= 0.4:
+                        print("Your magick strikes with devastating force!")
+                        enemy_stats['health_stat'] -= (user_stats['attack_stat'] + 5)
+                        inventory.remove('raw magick')
+                    else:
+                        print("Your magick fizzles and dissipates...")
+                        inventory.remove('raw magick')
+                else:
+                    print("You don't have any raw magick left!")
+                    print("You attempt a melee attack instead...")
+                    attack_chance = random.random()
+                    attack(attack_chance, user_stats, enemy_stats)
+            else:
+                print("You attack the enemy...")
+                attack_chance = random.random()
+                attack(attack_chance, user_stats, enemy_stats)
+            
             if enemy_stats['health_stat'] <= 0:
                 defeat_enemy(enemy_stats, user_stats)
                 user_win_count += 1
@@ -418,10 +551,6 @@ def combat(user_stats, enemy_stats, inventory, items, user_win_count):
             print(f"Your Health: {user_stats['health_stat']} | Enemy Health: {enemy_stats['health_stat']}")
             print('\033[31m' + "1. Attack\n2. Defend\n3. Use Item\n4. Check Stats\n5. Flee\n0. Quit" + '\033[0m')
             user_action = str(input("Choose an action: "))
-        elif user_action == '1' and user_stats['class'] == 'Rouge': # Needs to be finished
-            break
-        elif user_action == '1' and user_stats['class'] == 'Mage': # Needs to be finished
-            break
         elif user_action == '2':
             print("You defend yourself...")
             defend_chance = random.random()
@@ -469,7 +598,7 @@ def combat(user_stats, enemy_stats, inventory, items, user_win_count):
         elif user_action == '5':
             print("You attempt to flee...")
             flee_chance = random.random()
-            flee(flee_chance, user_stats, inventory, enemy_stats, items, in_combat)
+            flee(flee_chance, user_stats, inventory, enemy_stats, items, in_combat, user_win_count)
             print(f"Your Health: {user_stats['health_stat']} | Enemy Health: {enemy_stats['health_stat']}")
             print('\033[31m' + "1. Attack\n2. Defend\n3. Use Item\n4. Check Stats\n5. Flee\n0. Quit" + '\033[0m')
             user_action = str(input("Choose an action: "))
@@ -489,6 +618,33 @@ def combat(user_stats, enemy_stats, inventory, items, user_win_count):
             print(f"Your Health: {user_stats['health_stat']} | Enemy Health: {enemy_stats['health_stat']}")
             print('\033[31m' + "1. Attack\n2. Defend\n3. Use Item\n4. Check Stats\n5. Flee\n0. Quit" + '\033[0m')
             user_action = str(input("Choose an action: "))
+
+# New function to generate different enemy types
+def generate_enemy(enemy_stats, user_win_count):
+    # Base stats that increase with each enemy defeated
+    base_attack = 1 + (user_win_count // 3)
+    base_defence = 1 + (user_win_count // 3)
+    base_health = 5 + (user_win_count * 2)
+    
+    # Choose enemy type
+    enemy_type = random.choice(['Slime', 'Imp', 'Golem'])
+    enemy_stats['type'] = enemy_type
+    
+    if enemy_type == 'Slime':
+        # Basic monster with balanced stats
+        enemy_stats['attack_stat'] = base_attack
+        enemy_stats['defence_stat'] = base_defence
+        enemy_stats['health_stat'] = base_health
+    elif enemy_type == 'Imp':
+        # Agile monster with lower health but higher attack
+        enemy_stats['attack_stat'] = base_attack + 2
+        enemy_stats['defence_stat'] = base_defence - 1
+        enemy_stats['health_stat'] = base_health - 3
+    elif enemy_type == 'Golem':
+        # Beefy monster with high health and defence
+        enemy_stats['attack_stat'] = base_attack - 1
+        enemy_stats['defence_stat'] = base_defence + 2
+        enemy_stats['health_stat'] = base_health + 5
 
 if __name__ == "__main__":
     main()
